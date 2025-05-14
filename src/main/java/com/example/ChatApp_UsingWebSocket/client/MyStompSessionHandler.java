@@ -18,33 +18,46 @@ public class MyStompSessionHandler extends StompSessionHandlerAdapter {
 
     @Override
     public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
-        session.subscribe("/topic/messages", new StompFrameHandler() {
-            @Override
-            public Type getPayloadType(StompHeaders headers) {
-                return Message.class;
-            }
+        System.out.println("Client Connected");
+        try {
+            StompFrameHandler handler = new StompFrameHandler() {
+                @Override
+                public Type getPayloadType(StompHeaders headers) {
+                    return Message.class;
+                }
 
-            @Override
-            public void handleFrame(StompHeaders headers, Object payload) {
-                try{
-                    if(payload instanceof Message){
-                        Message message = (Message) payload;
-                        System.out.println("Received message : " + message.getUser() + " : " + message.getMessage());
-                    }
-                    else {
-                        System.out.println("Received unexpected payload type : " + payload.getClass());
+                @Override
+                public void handleFrame(StompHeaders headers, Object payload) {
+                    // Handle message
+                    try{
+                        if(payload instanceof Message){
+                            Message message = (Message) payload;
+                            System.out.println("Received message : " + message.getUser() + " : " + message.getMessage());
+                        }
+                        else {
+                            System.out.println("Received unexpected payload type : " + payload.getClass());
+                        }
+                    } catch (Exception e){
+                        e.printStackTrace();
                     }
                 }
-                catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-        });
+            };
+
+            StompHeaders subHeaders = new StompHeaders();
+            subHeaders.setReceipt("sub-receipt");
+
+            session.subscribe("/topic/messages", handler, subHeaders)
+                    .addReceiptTask(() -> System.out.println("Subscription confirmed!"))
+                    .addErrorTask(e -> System.out.println("Error: " + e));
+
+            System.out.println("Client Subscribe to /topic/messages"); // Should now print
+        } catch (Exception e) {
+            System.out.println("Connection error: " + e.getMessage());
+        }
     }
 
     @Override
     public void handleTransportError(StompSession session, Throwable exception) {
-        super.handleTransportError(session, exception);
         exception.printStackTrace();
     }
 }

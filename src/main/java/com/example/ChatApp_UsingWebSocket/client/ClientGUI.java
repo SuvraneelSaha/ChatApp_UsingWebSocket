@@ -1,7 +1,12 @@
 package com.example.ChatApp_UsingWebSocket.client;
 
+import com.example.ChatApp_UsingWebSocket.Message;
+import jdk.jshell.execution.Util;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
@@ -89,10 +94,43 @@ public class ClientGUI extends JFrame {
         chatPanel.add(messagePanel,BorderLayout.CENTER);
 
         // for testing -
-        JLabel message = new JLabel("Random Text");
-        message.setFont(new Font("Inter",Font.BOLD,18));
-        message.setForeground(Utilities.TEXT_COLOR);
-        messagePanel.add(message);
+//        messagePanel.add(createChatMessageComponent(new Message("Aaggin","What If")));
+
+
+        // input panel
+        JPanel inputPanel = new JPanel();
+        inputPanel.setBorder(Utilities.addPadding(10,10,10,10));
+        inputPanel.setLayout(new BorderLayout());
+        inputPanel.setBackground(Utilities.TRANSPARENT_COLOR);
+
+
+        JTextField inputField = new JTextField();
+        inputField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                if(e.getKeyChar() == KeyEvent.VK_ENTER){
+                    String input = inputField.getText();
+                    inputField.setText("");
+
+                    // this below is an edge case for when the text input field is empty 
+                    if(input.isEmpty()){
+                        return;
+                    }
+                    messagePanel.add(createChatMessageComponent(new Message("Aaggin",input)));
+                    repaint();
+                    revalidate();
+                    // these above two functions are needed to refresh the gui for the Swing
+
+                }
+            }
+        });
+        inputField.setBackground(Utilities.SECONDARY_COLOR);
+        inputField.setForeground(Utilities.TEXT_COLOR);
+        inputField.setFont(new Font("Inter",Font.PLAIN,16));
+        inputField.setPreferredSize(new Dimension(inputPanel.getWidth(),50));
+        inputPanel.add(inputField,BorderLayout.CENTER);
+        chatPanel.add(inputPanel,BorderLayout.SOUTH);
+
 
 
         //adding the chat panel to the mother jframe ie client GUI
@@ -103,6 +141,7 @@ public class ClientGUI extends JFrame {
 
     private void addConnectedUsersComponents(){
         connectedUsersPanel = new JPanel();
+        connectedUsersPanel.setBorder(Utilities.addPadding(10,10,10,10));
         connectedUsersPanel.setLayout(new BoxLayout(connectedUsersPanel,BoxLayout.Y_AXIS));
         // JPanel 's Default layout is FlowLayout
         // BorderLayout (Default for JFrame)
@@ -117,6 +156,26 @@ public class ClientGUI extends JFrame {
 
         // now below - we are adding the panel to the GUI
         add(connectedUsersPanel,BorderLayout.WEST);
+    }
+
+    private JPanel createChatMessageComponent(Message message){
+        // this is the panel which will be containing the username , and the chat message
+        JPanel chatMessage = new JPanel();
+        chatMessage.setBackground(Utilities.TRANSPARENT_COLOR);
+        chatMessage.setLayout(new BoxLayout(chatMessage,BoxLayout.Y_AXIS));
+        chatMessage.setBorder(Utilities.addPadding(20,20,10,20));
+
+        JLabel userNameLabel = new JLabel(message.getUser());
+        userNameLabel.setFont(new Font("Inter",Font.BOLD,18));
+        userNameLabel.setForeground(Utilities.TEXT_COLOR);
+        chatMessage.add(userNameLabel);
+
+        JLabel messageLabel = new JLabel(message.getMessage());
+        messageLabel.setFont(new Font("Inter",Font.PLAIN,18));
+        messageLabel.setForeground(Utilities.TEXT_COLOR);
+        chatMessage.add(messageLabel);
+
+        return chatMessage;
     }
 
 }

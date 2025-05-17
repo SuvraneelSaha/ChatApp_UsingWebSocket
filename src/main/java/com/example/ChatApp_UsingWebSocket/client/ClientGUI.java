@@ -13,7 +13,7 @@ public class ClientGUI extends JFrame {
 // this was for testing the client
 //    }
 
-    private JPanel connectedUsersPanel;
+    private JPanel connectedUsersPanel,messagePanel;
     // its a div - jPanel
     public ClientGUI(String username){
         super("User Name is :" +username);
@@ -73,11 +73,39 @@ public class ClientGUI extends JFrame {
     }
     private void addGUIComponents(){
         addConnectedUsersComponents();
+        addChatComponents();
+
+    }
+
+    private void addChatComponents() {
+        JPanel chatPanel = new JPanel();
+        // default layout of Jpanel is ?
+        chatPanel.setLayout(new BorderLayout());
+        chatPanel.setBackground(Utilities.TRANSPARENT_COLOR);
+
+        messagePanel = new JPanel();
+        messagePanel.setLayout(new BoxLayout(messagePanel,BoxLayout.Y_AXIS));
+        messagePanel.setBackground(Utilities.TRANSPARENT_COLOR);
+        chatPanel.add(messagePanel,BorderLayout.CENTER);
+
+        // for testing -
+        JLabel message = new JLabel("Random Text");
+        message.setFont(new Font("Inter",Font.BOLD,18));
+        message.setForeground(Utilities.TEXT_COLOR);
+        messagePanel.add(message);
+
+
+        //adding the chat panel to the mother jframe ie client GUI
+        add(chatPanel,BorderLayout.CENTER);
+
+
     }
 
     private void addConnectedUsersComponents(){
         connectedUsersPanel = new JPanel();
         connectedUsersPanel.setLayout(new BoxLayout(connectedUsersPanel,BoxLayout.Y_AXIS));
+        // JPanel 's Default layout is FlowLayout
+        // BorderLayout (Default for JFrame)
         connectedUsersPanel.setBackground(Utilities.SECONDARY_COLOR);
         connectedUsersPanel.setPreferredSize(new Dimension(200,getHeight()));
         // getheight() -- method for the height to fetch from the mother JFrame ;

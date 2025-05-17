@@ -112,7 +112,7 @@ public class ClientGUI extends JFrame {
                     String input = inputField.getText();
                     inputField.setText("");
 
-                    // this below is an edge case for when the text input field is empty 
+                    // this below is an edge case for when the text input field is empty
                     if(input.isEmpty()){
                         return;
                     }

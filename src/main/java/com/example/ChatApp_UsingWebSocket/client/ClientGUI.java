@@ -1,11 +1,9 @@
 package com.example.ChatApp_UsingWebSocket.client;
 
-import com.example.ChatApp_UsingWebSocket.Message;
-
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.util.concurrent.ExecutionException;
 
 public class ClientGUI extends JFrame {
 //    public static void main(String[] args) throws ExecutionException, InterruptedException {
@@ -15,6 +13,8 @@ public class ClientGUI extends JFrame {
 // this was for testing the client
 //    }
 
+    private JPanel connectedUsersPanel;
+    // its a div - jPanel
     public ClientGUI(String username){
         super("User Name is :" +username);
 
@@ -67,5 +67,28 @@ public class ClientGUI extends JFrame {
             }
         });
 
+        getContentPane().setBackground(Utilities.PRIMARY_COLOR);
+
+        addGUIComponents();
     }
+    private void addGUIComponents(){
+        addConnectedUsersComponents();
+    }
+
+    private void addConnectedUsersComponents(){
+        connectedUsersPanel = new JPanel();
+        connectedUsersPanel.setLayout(new BoxLayout(connectedUsersPanel,BoxLayout.Y_AXIS));
+        connectedUsersPanel.setBackground(Utilities.SECONDARY_COLOR);
+        connectedUsersPanel.setPreferredSize(new Dimension(200,getHeight()));
+        // getheight() -- method for the height to fetch from the mother JFrame ;
+
+        JLabel connectedUsersLabel = new JLabel("Connected Users");
+        connectedUsersLabel.setFont(new Font("Inter",Font.BOLD,18));
+        connectedUsersLabel.setForeground(Utilities.TEXT_COLOR);
+        connectedUsersPanel.add(connectedUsersLabel);
+
+        // now below - we are adding the panel to the GUI
+        add(connectedUsersPanel,BorderLayout.WEST);
+    }
+
 }

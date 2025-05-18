@@ -47,7 +47,7 @@ public class MyStompClient {
     }
     public void sendMessage(Message message){
         try {
-            session.send("app/message",message);
+            session.send("/app/message",message);
             System.out.println("Message Sent : " + message.getMessage());
         }catch (Exception e){
             e.printStackTrace();

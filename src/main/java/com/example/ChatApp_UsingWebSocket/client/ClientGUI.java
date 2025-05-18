@@ -9,6 +9,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.concurrent.ExecutionException;
 
 public class ClientGUI extends JFrame {
 //    public static void main(String[] args) throws ExecutionException, InterruptedException {
@@ -19,10 +20,13 @@ public class ClientGUI extends JFrame {
 //    }
 
     private JPanel connectedUsersPanel,messagePanel;
+    private MyStompClient myStompClient;
+    private String userName ;
     // its a div - jPanel
-    public ClientGUI(String username){
+    public ClientGUI(String username) throws ExecutionException, InterruptedException {
         super("User Name is :" +username);
-
+        this.userName = username;
+        myStompClient = new MyStompClient(userName);
         setSize(1218,685);
         setLocationRelativeTo(null);
 
@@ -41,6 +45,7 @@ public class ClientGUI extends JFrame {
                 int option = JOptionPane.showConfirmDialog(ClientGUI.this,"Do you really want to Leave ?", "Exit" , JOptionPane.YES_NO_OPTION );
 
                 if (option == JOptionPane.YES_OPTION){
+                    myStompClient.disconnectUser(userName);
                     ClientGUI.this.dispose();
 
                 }
@@ -121,11 +126,15 @@ public class ClientGUI extends JFrame {
                     revalidate();
                     // these above two functions are needed to refresh the gui for the Swing
 
+                    // sending a message
+                    myStompClient.sendMessage(new Message(userName,input));
+
                 }
             }
         });
         inputField.setBackground(Utilities.SECONDARY_COLOR);
         inputField.setForeground(Utilities.TEXT_COLOR);
+        inputField.setBorder(Utilities.addPadding(0,10,0,10));
         inputField.setFont(new Font("Inter",Font.PLAIN,16));
         inputField.setPreferredSize(new Dimension(inputPanel.getWidth(),50));
         inputPanel.add(inputField,BorderLayout.CENTER);
